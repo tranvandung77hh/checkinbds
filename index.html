@@ -226,7 +226,7 @@ main:focus{outline:none}
   will-change:transform,opacity}
 .bound::before{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(139,14,26,.3) 14%,var(--wine) 52%,rgba(139,14,26,.3) 84%,transparent);box-shadow:0 0 14px rgba(139,14,26,.16)}
 .bound span{font-family:var(--body);font-weight:600;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--wine);white-space:nowrap;padding:0 var(--gut) 0 14px;text-shadow:0 1px 4px rgba(255,250,244,.95)}
-@media (max-width:860px){.bound span{display:none}}
+@media (max-width:860px){.bound span{font-size:8.5px;letter-spacing:.16em;padding:0 10px 0 12px}}
 
 .ring{position:absolute;right:var(--gut);bottom:6vh;width:44px;height:44px;color:var(--wine);transform:rotate(-90deg);pointer-events:none;transition:opacity .6s var(--eo)}
 .stage.video-ready .ring,.stage.video-failed .ring{opacity:0}
@@ -288,10 +288,7 @@ main:focus{outline:none}
 .static .bound{position:absolute;top:auto;bottom:clamp(44px,7vh,72px);opacity:1;transform:none}
 
 /* ======== 5 GATE STATIC-HERO (khop tung ky tu voi mang GATES trong JS) ======== */
-@media (max-width: 720px),
-       (orientation: portrait) and (max-width: 1024px),
-       (orientation: portrait) and (pointer: coarse),
-       (orientation: landscape) and (pointer: coarse) and (max-height: 560px),
+@media (orientation: landscape) and (pointer: coarse) and (max-height: 560px),
        (prefers-reduced-motion: reduce){
   .hero{height:auto}
   .stage{display:none}
@@ -521,6 +518,78 @@ footer{background:var(--wine);color:var(--on-wine);padding:clamp(40px,5.5vh,70px
   .e-halves .w,.e-punch .w,.e-rise .w,.c{transform:none !important}
 }
 body.paused *,body.paused *::before,body.paused *::after{animation-play-state:paused !important}
+
+/* ============ DIEN THOAI LA BAN CHINH ============
+   Do that truoc khi bat: video 4,11 MB (duoi nguong 8 MB), va khi cat doc chi
+   con 26% be ngang thi do doc chu van 6,11:1 (nguong 3,5), cat tai 30% la sach nhat.
+   Doi lai, moi hieu ung ngon may bi TAT o day de nhuong tai nguyen cho video. */
+@media (max-width: 860px){
+  /* 1. Tat cac lop ton may nhat */
+  .grain{display:none}                         /* lop hat phu toan man, mix-blend-mode rat nang */
+  .env i{animation:none;opacity:.55}           /* quang sang 85vmax chay lien tuc */
+  .mist i{filter:blur(13px)}                   /* blur dien rong la thu nang nhat */
+  .mist.a i,.mist.b i{animation:none}          /* phai viet du .mist.a/.b moi de duoc rule goc */
+  .dust{display:none}                          /* 26 hat, moi hat mot animation rieng */
+  .nav.solid{backdrop-filter:none;background:rgba(253,244,231,.97)}
+  .sky-l,.sl,.mist,.sun{will-change:auto}      /* bot lop GPU phai giu san */
+
+  /* 3. Chu chiem tron be ngang, khong con cot hep 46vw */
+  /* Tren dien thoai chu phai nam DUOI, khong can giua. Can giua thi phan tren bi
+     chu che mat mat troi va day mai nha, con 338px duoi cung bo trong. De chu xuong
+     duoi thi hon nua man hinh tren la anh sach, va chu nam dung vung suong nhat
+     nhat cua khung hinh nen cang de doc. */
+  /* LOI DA SUA: de .band cao 100% man hinh thi inset:-14% cua vung sang tinh theo
+     812px, tuc la quang sang no ra om CA man hinh chu khong om khoi chu. Do la ly do
+     ty le doc vot len 8,98 ma anh nen thi bay mat. Cho .band co lai dung bang khoi
+     chu thi quang sang bam theo chu, dung nhu y do ban laptop. */
+  .band{left:var(--gut);right:var(--gut);width:auto;padding-right:0;
+        top:auto;bottom:15vh;height:auto;padding-bottom:0}
+  /* Duong bien len tren khoi chu: no tro thanh duong ngan giua ANH va LOI NHAN,
+     dung nghia "bien" ma thuong hieu muon noi. */
+  .bound{top:46%}
+  .band .sub{max-width:none;font-size:clamp(15px,4.2vw,19px)}
+  .band .hl{font-size:clamp(30px,8.8vw,46px)}
+  .band .hl.num{font-size:clamp(62px,22vw,96px)}
+  /* Quang che BAM THEO khoi chu, khong phu ca man hinh. Tren dien thoai chu nam
+     giua man nen tam quang phai ve giua, khong lech trai 36% nhu ban laptop. */
+  /* --pa do JS gan thang vao the .band nen CSS khong de duoc. Muon dam hon tren
+     dien thoai thi cong them qua mot bien rieng, va quan trong hon la TRAI RONG
+     vung sang: giu nguyen do dam toi 54% ban kinh roi moi nhat dan, thay vi nhat
+     ngay tu giua. Cach nay lam nen sau chu dong deu ma khong lam trang ca man hinh. */
+  /* LOI DA SUA LAN 2: ban truoc dat ban kinh doc 70% khung ma khung chi cao
+     bang nua do, nen hinh bau duc bi CAT NGANG -> hien ra mot duong thang cung
+     chay giua man hinh. Gio noi khung ra (inset -50% -40%) va ha ban kinh xuong
+     46%, tuc la quang sang tat han TRUOC khi cham mep khung. Khong con duong cat. */
+  /* Khoi chu tren dien thoai la mot hinh CHU NHAT rong (338 x 170), nen phu no
+     bang hinh bau duc luon thieu o bon goc. Dung mot dai doc mo dan thi vua dung
+     dang: dam deu ngang qua chu, nhat dan len tren va xuong duoi, va tat han o hai
+     dau nen khong con duong cat. Be ngang khung tran ra ngoai man hinh nen hai mep
+     doc cung khong bao gio lo ra. */
+  .band::before{inset:-34% -40%;
+    --pb:min(1, calc(var(--pa,.8) + .06));
+    background:linear-gradient(180deg,
+      rgba(255,250,244,0) 0%,
+      rgba(255,250,244,calc(var(--pb) * .55)) 12%,
+      rgba(255,250,244,var(--pb)) 26%,
+      rgba(255,250,244,var(--pb)) 74%,
+      rgba(255,250,244,calc(var(--pb) * .55)) 88%,
+      rgba(255,250,244,0) 100%)}
+  .band .btn{font-size:11px;padding:15px 20px}
+
+  /* 4. Lop che phu CA be ngang, vi chu khong con nam ben trai nua */
+  /* LOI DA SUA: ban truoc phu trang 78-86% len CA man hinh, lam video bien mat han,
+     man hinh chi con mot mang kem trang tron. Gio chi phu nhe de diu bot, phan che
+     that nam o quang chu ben tren. */
+  .scrim{background:none}
+  .scrim-l{background:linear-gradient(180deg,rgba(255,250,244,.06) 0%,rgba(255,250,244,.2) 46%,rgba(255,250,244,.08) 100%)}
+  .ring,.cue{top:26vh;bottom:auto}
+}
+/* Video len hinh roi thi BO HAN lop troi CSS ben duoi. Lop troi co 8 phan tu phu
+   toan man hinh (3 lop troi, mat troi, 2 dai suong, 2 lop phoi nha), tat ca deu bam
+   theo --sp. Giu lai o opacity 0 thi trinh duyet VAN tinh lai va ve lai moi vong cuon.
+   Dat sau khi video mo chong xong (1,2 giay) de khong bi nhay hinh. */
+.stage.video-ready .sky,.stage.video-ready .sky *{animation-play-state:paused}
+.stage.sky-off .sky{display:none}
 </style>
 </head>
 <body>
@@ -953,9 +1022,15 @@ var posterS=document.getElementById('poster-s');
 var heroSec=document.getElementById('hero-sec');
 var bandEls=[].slice.call(document.querySelectorAll('#bands .band'));
 
-var VIDEO_URL='hero-scrub.mp4';
-var POSTER_URL='hero-poster.jpg';
-var VIDEO_BYTES=4310481;   /* byte size that cua hero-scrub.mp4 */
+/* Dien thoai cam doc chi nhin thay 26% be ngang khung hinh, nhung van phai giai ma
+   ca 1920px. Nen co mot ban DOC cat san 608x1080: nhe hon 2,9 lan (1,39 MB so voi
+   4,11 MB) va it hon 3,2 lan so diem anh phai giai ma. Khung cat lay dai 608px o
+   vi tri 78% ben phai: do la cho co mat troi va day mai nha, chu khong phai dai
+   suong trang o 30% ben trai (dai do do chu de doc nhat nhung gan nhu khong co hinh). */
+var MOBILE_VIDEO=window.matchMedia('(max-width: 860px)').matches;
+var VIDEO_URL=MOBILE_VIDEO ? 'hero-mobile.mp4' : 'hero-scrub.mp4';
+var POSTER_URL=MOBILE_VIDEO ? 'hero-poster-m.jpg' : 'hero-poster.jpg';
+var VIDEO_BYTES=MOBILE_VIDEO ? 1422232 : 4310481;
 
 /* ===== BANG CHIA NHIP cuon -> thoi diem video =====
    Cu quay nay co nhip RAT lech: 48% dau chi mang 21% luong thay doi hinh anh,
@@ -1061,11 +1136,21 @@ function heroProgress(){
 }
 
 var lastSp=-1;
+/* Chi hai noi dung den --sp: lop troi va duong bien. Ghi thang vao hai cho do,
+   dung ghi len .stage. Ghi len .stage thi trinh duyet phai tinh lai kieu cho CA
+   khoi chu, video, poster va cac lop phu moi vong cuon, hoan toan vo ich. Sau khi
+   video len hinh thi .sky bi an han, nen viec ghi --sp gan nhu khong con ton gi. */
+var skyEl=stage.querySelector('.sky');
+var boundEl=stage.querySelector('.bound');
 function updateCaptions(p){
   /* --sp lai ca nen hero: ba lop troi, mat troi, hai dai suong, hai lop phoi nha
      va duong bien. Day la thu lam nen DOI THAT theo tung vong cuon.
      Delta-gate 0,004 nen chi ghi DOM khi that su doi. */
-  if(Math.abs(p-lastSp)>0.004){ lastSp=p; stage.style.setProperty('--sp',p.toFixed(3)); }
+  if(Math.abs(p-lastSp)>0.004){ lastSp=p;
+    var spv=p.toFixed(3);
+    if(skyEl) skyEl.style.setProperty('--sp',spv);
+    if(boundEl) boundEl.style.setProperty('--sp',spv);
+  }
   for(var i=0;i<bands.length;i++){
     var bd=bands[i], a=bd.a, b=bd.b;
     var f=Math.min(bd.ramp,(b-a)/3);
@@ -1185,11 +1270,14 @@ function attach(blob){
   video.addEventListener('canplay',function(){
     requestSeek(mapTime(heroProgress())*video.duration);
     stage.classList.add('video-ready');
+    /* Cho video mo chong xong roi moi bo han lop troi CSS, de khong nhay hinh. */
+    setTimeout(function(){ stage.classList.add('sky-off'); },1200);
   },{once:true});
 }
 function failVideo(){
   if(stage.classList.contains('video-failed')) return;
   stage.classList.add('video-failed');
+  stage.classList.remove('sky-off');   /* khong co video thi lop troi phai quay lai */
   if(ring && ring.parentNode){
     var cue=document.createElementNS('http://www.w3.org/2000/svg','svg');
     cue.setAttribute('class','cue'); cue.setAttribute('viewBox','0 0 48 48');
@@ -1200,10 +1288,11 @@ function failVideo(){
 }
 
 /* ================= 7. NAM GATE STATIC-HERO ================= */
+/* Anh Dung uu tien DIEN THOAI truoc, nen dien thoai duoc CHAY video, khong con
+   bi dua ve hero tinh. Chi con 2 cong: dien thoai cam ngang qua thap de chua noi
+   hanh trinh, va nguoi dung da chon giam chuyen dong.
+   Nam chuoi nay phai khop tung ky tu voi @media trong CSS. */
 var GATES=[
-  '(max-width: 720px)',
-  '(orientation: portrait) and (max-width: 1024px)',
-  '(orientation: portrait) and (pointer: coarse)',
   '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
   '(prefers-reduced-motion: reduce)'
 ];
